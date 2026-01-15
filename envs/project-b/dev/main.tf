@@ -31,4 +31,8 @@ module "deployer_sa" {
   github_repo                 = var.github_repo
   service_account_id          = var.service_account_id
   runtime_roles               = var.runtime_roles
+
+  allow_bootstrap_roles            = false
+  bootstrap_roles                  = []
+  create_wif_impersonation_binding = true
 }
