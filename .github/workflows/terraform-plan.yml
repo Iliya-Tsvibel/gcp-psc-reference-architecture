@@ -1,0 +1,88 @@
+name: terraform-plan (WIF)
+
+on:
+  pull_request:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  plan-project-a:
+    name: Plan (project-a/dev)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: envs/project-a/dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Auth to Google via Workload Identity Federation (Project A)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER_NAME_PROJECT_A }}
+          service_account: ${{ vars.RUNTIME_SA_EMAIL_PROJECT_A }}
+
+      - name: Terraform init
+        run: terraform init -input=false
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan (plan-only)
+        run: |
+          terraform plan -input=false -lock=false -no-color \
+            -var "project_id=${{ vars.PROJECT_A_ID }}" \
+            -var "region=${{ vars.REGION }}" \
+            -var "network_name=${{ vars.PROJECT_A_NETWORK_NAME }}" \
+            -var "subnets=${{ vars.PROJECT_A_SUBNETS }}" \
+            -var "existing_workload_identity_pool_name=${{ vars.WIF_POOL_NAME_PROJECT_A }}" \
+            -var "github_org=${{ vars.GITHUB_ORG }}" \
+            -var "github_repo=${{ vars.GITHUB_REPO }}" \
+            -var "service_account_id=${{ vars.RUNTIME_SA_ID }}"
+
+  plan-project-b:
+    name: Plan (project-b/dev)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: envs/project-b/dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Auth to Google via Workload Identity Federation (Project B)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER_NAME_PROJECT_B }}
+          service_account: ${{ vars.RUNTIME_SA_EMAIL_PROJECT_B }}
+
+      - name: Terraform init
+        run: terraform init -input=false
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan (plan-only)
+        run: |
+          terraform plan -input=false -lock=false -no-color \
+            -var "project_id=${{ vars.PROJECT_B_ID }}" \
+            -var "region=${{ vars.REGION }}" \
+            -var "network_name=${{ vars.PROJECT_B_NETWORK_NAME }}" \
+            -var "subnets=${{ vars.PROJECT_B_SUBNETS }}" \
+            -var "existing_workload_identity_pool_name=${{ vars.WIF_POOL_NAME_PROJECT_B }}" \
+            -var "github_org=${{ vars.GITHUB_ORG }}" \
+            -var "github_repo=${{ vars.GITHUB_REPO }}" \
+            -var "service_account_id=${{ vars.RUNTIME_SA_ID }}"
