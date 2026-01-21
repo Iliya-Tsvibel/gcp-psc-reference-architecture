@@ -1,7 +1,18 @@
-# Module: Internal Load Balancer
+# Module: Internal HTTPS Load Balancer (Regional)
 
 ## Purpose
-This module will encapsulate shared infrastructure for Internal Load Balancer functionality in a production-grade implementation. It is intentionally a skeleton with no resources.
+This module defines a minimal Internal HTTPS Load Balancer (regional):
+- Backend service that accepts backend groups (NEGs / instance groups)
+- URL map + HTTPS proxy
+- Regional forwarding rule (INTERNAL_MANAGED)
+- Self-managed SSL certificates passed in as inputs (minimal approach)
 
 ## Why it belongs here
-Keeping this module in the shared layer preserves security boundaries and architecture consistency across environments while allowing centralized, audited configuration.
+The private project (project-b) typically exposes internal services via an internal LB.
+This is also a natural anchor point for Private Service Connect producer side (service attachment) in later stages.
+
+## Notes
+This module is intentionally minimal and generic.
+It does not assume GKE or Ingress; backends are passed as backend groups.
+
+This repository is plan-only.

@@ -1,5 +1,9 @@
-// Placeholder outputs for future use.
-// output "example" {
-//   description = "Example output from this module."
-//   value       = null
-// }
+output "ip_address" {
+  description = "External IP address."
+  value       = google_compute_global_address.ip.address
+}
+
+output "forwarding_rule" {
+  description = "Forwarding rule self link."
+  value       = google_compute_global_forwarding_rule.fwd.self_link
+}

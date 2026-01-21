@@ -1,7 +1,19 @@
-# Module: External Load Balancer
+# Module: External HTTPS Load Balancer (Global)
 
 ## Purpose
-This module will encapsulate shared infrastructure for External Load Balancer functionality in a production-grade implementation. It is intentionally a skeleton with no resources.
+This module defines a minimal External HTTPS Load Balancer:
+- Global static IP
+- Google-managed SSL certificate
+- Backend service that accepts backend groups (NEGs / instance groups)
+- URL map + HTTPS proxy + forwarding rule
+- Optional Cloud Armor attachment
 
 ## Why it belongs here
-Keeping this module in the shared layer preserves security boundaries and architecture consistency across environments while allowing centralized, audited configuration.
+The public perimeter (project-a) typically exposes an external LB as the internet entrypoint.
+Keeping it as a shared module preserves consistency and allows security controls (e.g. Cloud Armor) to be attached uniformly.
+
+## Notes
+This module is generic and does not assume GKE.
+Backend groups should be provided by the environment that owns the actual workloads.
+
+This repository is plan-only.

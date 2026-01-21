@@ -1,5 +1,4 @@
-// Placeholder outputs for future use.
-// output "example" {
-//   description = "Example output from this module."
-//   value       = null
-// }
+output "forwarding_rule" {
+  description = "Forwarding rule self link."
+  value       = google_compute_forwarding_rule.fwd.self_link
+}
